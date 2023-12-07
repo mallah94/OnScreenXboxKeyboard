@@ -5,11 +5,11 @@ a simple onscreen keyboard that works with the controller
 This project was made for fun and just because I had free from work, please do not assume this keyboard works perfectly.
 There will be bugs, I will try and fix them whenever I have time.
 
-# Supported Controllers
-  XInput in general, up to 4 controllers. 
+# Support
+ + XInput in general, up to 4 controllers. 
 
 # How to install
-  Just download and run the installer. 
+ + Just download and run the installer in the release. 
 
 # How To Use
  + Once the program starts it will show a small keyboard icon at the left corner of your desktop (yes this is unnecessary and is a remnant from a way older version of this code that I had locally I will remove it soon I hope)
@@ -25,6 +25,7 @@ There will be bugs, I will try and fix them whenever I have time.
      + "LT" is either the left arrow or down key if the capslock is on.
      + "RB" is a toggle between the letter and number/symbol layout
      + "LB" is the capslock toggle.
++ Only one instance of the keyboard can be shown at a time. if multiple controllers are connected only the controller that the started the keyboard can type. 
   
 # Work To Be Done
   + As mentioned above rewrite the software so it does not have the icon at the button corner of the screen. (it is useless in the current version of the app)

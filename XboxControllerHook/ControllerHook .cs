@@ -123,7 +123,7 @@ public class ControllerHook : IControllerHook
         var controller = _controllers.FirstOrDefault(x => x.UserIndex == index);
         if (controller is null)
             return;
-        await Task.Delay(200);
+        var firstButtonPressed = false;
         while (controller.IsConnected && !_stopActiveController)
         {
             foreach (XboxControllerButton button in Enum.GetValues(typeof(XboxControllerButton)))
@@ -134,16 +134,20 @@ public class ControllerHook : IControllerHook
                 {   
                     if (foundButton.Item2 != isButtonPressed)
                     {
-                        if (isButtonPressed)
+                        if (isButtonPressed && firstButtonPressed)
                         {
                             OnKeyPressed(button, false);
                         }
+                        firstButtonPressed = true;
                         _buttonStates[(int)index].Remove(foundButton);
                         _buttonStates[(int)index].Add(new Tuple<XboxControllerButton, bool, DateTime>(button, isButtonPressed, DateTime.Now));
                     }
                     else if (isButtonPressed && foundButton.Item2 == isButtonPressed && DateTime.Now - foundButton.Item3 >= TimeSpan.FromSeconds(2))
                     {
-                        OnKeyPressed(button, true);
+                        if (firstButtonPressed)
+                        {
+                            OnKeyPressed(button, true);
+                        }
                     }                 
                 }
             }

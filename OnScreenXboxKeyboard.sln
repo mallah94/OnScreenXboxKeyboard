@@ -9,7 +9,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OnScreenXboxKeyboard", "OnS
 EndProject
 Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "OnScreenXboxKeyboardSetUp", "OnScreenXboxKeyboardSetUp\OnScreenXboxKeyboardSetUp.vdproj", "{E1DE295F-1B10-4323-8FFB-35B2489FC3F5}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Installer", "Installer", "{053AC82F-3417-4807-AB11-BAAA4BC30410}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{3E0BCDA8-5BE1-42E8-8E39-394DBC52DA2B}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
