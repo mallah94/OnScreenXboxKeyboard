@@ -7,6 +7,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XboxControllerHook", "XboxC
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OnScreenXboxKeyboard", "OnScreenXboxKeyboard\OnScreenXboxKeyboard.csproj", "{13D055FC-857F-422E-847C-90DE0CFDE376}"
 EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "OnScreenXboxKeyboardSetUp", "OnScreenXboxKeyboardSetUp\OnScreenXboxKeyboardSetUp.vdproj", "{E1DE295F-1B10-4323-8FFB-35B2489FC3F5}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Installer", "Installer", "{053AC82F-3417-4807-AB11-BAAA4BC30410}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -31,6 +35,10 @@ Global
 		{13D055FC-857F-422E-847C-90DE0CFDE376}.Release|Any CPU.Build.0 = Release|Any CPU
 		{13D055FC-857F-422E-847C-90DE0CFDE376}.Release|x86.ActiveCfg = Release|Any CPU
 		{13D055FC-857F-422E-847C-90DE0CFDE376}.Release|x86.Build.0 = Release|Any CPU
+		{E1DE295F-1B10-4323-8FFB-35B2489FC3F5}.Debug|Any CPU.ActiveCfg = Debug
+		{E1DE295F-1B10-4323-8FFB-35B2489FC3F5}.Debug|x86.ActiveCfg = Debug
+		{E1DE295F-1B10-4323-8FFB-35B2489FC3F5}.Release|Any CPU.ActiveCfg = Release
+		{E1DE295F-1B10-4323-8FFB-35B2489FC3F5}.Release|x86.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
