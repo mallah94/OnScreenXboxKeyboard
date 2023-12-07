@@ -118,6 +118,10 @@ namespace KeyPad
                         TypeResults("{TAB}");
                         break;
 
+                    case "SPACE":
+                        TypeResults(" ");
+                        break;
+
                     case "FUNC":
                         if (_capsLocked)
                         {
