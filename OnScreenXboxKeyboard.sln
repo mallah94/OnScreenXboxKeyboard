@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34322.80
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OnScreenXboxKeyboard", "ShowKeyboardButton\OnScreenXboxKeyboard.csproj", "{CEB3DC8C-DCBF-43E1-B5AB-C71D5096E667}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XboxControllerHook", "XboxControllerHook\XboxControllerHook.csproj", "{DA1DDBEA-2B1C-411D-B069-64E2D20F96E5}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OnScreenXboxKeyboard", "OnScreenXboxKeyboard\OnScreenXboxKeyboard.csproj", "{13D055FC-857F-422E-847C-90DE0CFDE376}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,14 +15,6 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{CEB3DC8C-DCBF-43E1-B5AB-C71D5096E667}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CEB3DC8C-DCBF-43E1-B5AB-C71D5096E667}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CEB3DC8C-DCBF-43E1-B5AB-C71D5096E667}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{CEB3DC8C-DCBF-43E1-B5AB-C71D5096E667}.Debug|x86.Build.0 = Debug|Any CPU
-		{CEB3DC8C-DCBF-43E1-B5AB-C71D5096E667}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CEB3DC8C-DCBF-43E1-B5AB-C71D5096E667}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CEB3DC8C-DCBF-43E1-B5AB-C71D5096E667}.Release|x86.ActiveCfg = Release|Any CPU
-		{CEB3DC8C-DCBF-43E1-B5AB-C71D5096E667}.Release|x86.Build.0 = Release|Any CPU
 		{DA1DDBEA-2B1C-411D-B069-64E2D20F96E5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{DA1DDBEA-2B1C-411D-B069-64E2D20F96E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DA1DDBEA-2B1C-411D-B069-64E2D20F96E5}.Debug|x86.ActiveCfg = Debug|Any CPU
@@ -31,6 +23,14 @@ Global
 		{DA1DDBEA-2B1C-411D-B069-64E2D20F96E5}.Release|Any CPU.Build.0 = Release|Any CPU
 		{DA1DDBEA-2B1C-411D-B069-64E2D20F96E5}.Release|x86.ActiveCfg = Release|Any CPU
 		{DA1DDBEA-2B1C-411D-B069-64E2D20F96E5}.Release|x86.Build.0 = Release|Any CPU
+		{13D055FC-857F-422E-847C-90DE0CFDE376}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{13D055FC-857F-422E-847C-90DE0CFDE376}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{13D055FC-857F-422E-847C-90DE0CFDE376}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{13D055FC-857F-422E-847C-90DE0CFDE376}.Debug|x86.Build.0 = Debug|Any CPU
+		{13D055FC-857F-422E-847C-90DE0CFDE376}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{13D055FC-857F-422E-847C-90DE0CFDE376}.Release|Any CPU.Build.0 = Release|Any CPU
+		{13D055FC-857F-422E-847C-90DE0CFDE376}.Release|x86.ActiveCfg = Release|Any CPU
+		{13D055FC-857F-422E-847C-90DE0CFDE376}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
