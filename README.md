@@ -11,6 +11,7 @@ There will be bugs, I will try and fix them whenever I have time.
 # How to install
  + Just download and run the installer in the release. 
  + The app will auto create a desktop shortcut and add itself as a startup app, if this behaviour is unwanted please feel free to delete the shortcuts.
+ + If you are updating from an earlier version please uninstall first then re install.
 
 # How To Use
  + Once the program starts it will show a small keyboard icon at the left corner of your desktop (yes this is unnecessary and is a remnant from a way older version of this code that I had locally I will remove it soon I hope)
@@ -36,4 +37,4 @@ There will be bugs, I will try and fix them whenever I have time.
 # Known bugs:
   + Some apps that also read controller input will continue to function while the keyboard is on. ==> The Windows settings app, for example, has this problem which means that you can not type there since the focus moves away from the selected text box if you do.
   + More to come I am assuming
-  
+  + Fix installer not updating

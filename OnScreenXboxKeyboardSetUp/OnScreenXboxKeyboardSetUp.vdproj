@@ -43,6 +43,22 @@
         "PrivateKeyFile" = "8:"
         "TimeStampServer" = "8:"
         "InstallerBootstrapper" = "3:2"
+            "BootstrapperCfg:{63ACBE69-63AA-4F98-B2B6-99F9E24495F2}"
+            {
+            "Enabled" = "11:TRUE"
+            "PromptEnabled" = "11:TRUE"
+            "PrerequisitesLocation" = "2:1"
+            "Url" = "8:"
+            "ComponentsUrl" = "8:"
+                "Items"
+                {
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:.NETFramework,Version=v4.7.2"
+                    {
+                    "Name" = "8:Microsoft .NET Framework 4.7.2 (x86 and x64)"
+                    "ProductCode" = "8:.NETFramework,Version=v4.7.2"
+                    }
+                }
+            }
         }
         "Release"
         {
@@ -193,15 +209,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:OnScreenXboxKeyboard"
-        "ProductCode" = "8:{26A4B35B-185D-4BAA-AAF1-B4D54229B988}"
-        "PackageCode" = "8:{86837A1A-C64F-409B-81EE-B59D0F8DBF01}"
+        "ProductCode" = "8:{385CBD88-3A7E-431F-847E-B115EE3E0AF7}"
+        "PackageCode" = "8:{A8BA2C1E-1096-4ED9-AA2F-A8F593201521}"
         "UpgradeCode" = "8:{4995697C-1356-4058-A6DD-627F78016CAC}"
         "AspNetVersion" = "8:"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:FALSE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:1.0.0"
+        "ProductVersion" = "8:1.0.3"
         "Manufacturer" = "8:Mallahji"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
@@ -743,7 +759,7 @@
         {
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_0B33727C2816410493D08691525A2846"
             {
-            "SourcePath" = "8:..\\OnScreenXboxKeyboard\\obj\\Debug\\net8.0-windows\\apphost.exe"
+            "SourcePath" = "8:..\\OnScreenXboxKeyboard\\obj\\Release\\net8.0-windows\\apphost.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_D204B7A9F208444AB47207AB7D7A426E"
