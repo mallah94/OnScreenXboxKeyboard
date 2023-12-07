@@ -107,7 +107,7 @@ namespace KeyPad
                         break;
                     
                     case "RETURN":
-                        this.Close();
+                        TypeResults("{ENTER}");
                         break;
 
                     case "BACK":
@@ -204,7 +204,7 @@ namespace KeyPad
                     { "&", "#"},
                     { "@", "%"},
                     { ";", "^"},
-                    { ":", "*"},
+                    { ":", "\""},
                     { "[", "{"},
                     { "]", "}"},
                     { "\\", "|"},
@@ -403,13 +403,6 @@ namespace KeyPad
             button?.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent));
         }
 
-        public void HandleTabClick()
-        {
-            _controllerClick = true;
-            var button = FindButtonByCommandParameter("TAB");
-            button?.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent));
-        }
-
         public void HandleCapsClick()
         {
             _controllerClick = true;
@@ -422,6 +415,11 @@ namespace KeyPad
             _controllerClick = true;
             var button = FindButtonByCommandParameter("RETURN");
             button?.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent));
+        }
+
+        public void HandleCLoseClick()
+        {
+           this.Close();
         }
 
         public void HandleRightClick()

@@ -91,7 +91,10 @@ namespace FloatingButton
             }
             else if (button == XboxControllerHook.Enums.XboxControllerButton.Start)
             {
-                _keyboardWindow?.HandleSubmitClick();
+                if (!e.IsButtonHeld)
+                {
+                    _keyboardWindow?.HandleSubmitClick();
+                }
             }
             else if (button == XboxControllerHook.Enums.XboxControllerButton.LeftTrigger)
             {
@@ -103,10 +106,7 @@ namespace FloatingButton
             }
             else if (button == XboxControllerHook.Enums.XboxControllerButton.Back)
             {
-                if (!e.IsButtonHeld)
-                {
-                    _keyboardWindow?.HandleTabClick();
-                }
+                _keyboardWindow?.HandleCLoseClick();
             }
         }
 

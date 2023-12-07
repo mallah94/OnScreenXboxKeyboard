@@ -17,7 +17,7 @@ There will be bugs, I will try and fix them whenever I have time.
  + The app is now listening for controllers
  + to activate the keyboard just press and hold the "Select"/"Back" button on your controller for 2 seconds.
  + You can use the D-Pad to select a letter and the A button to confirm it.
- + To exit the keyboard just press the "start button" once.
+ + To exit the keyboard just press the "Slect"/"Back" once.
  + special input:
      + "B" is either the steam overlay shortcut or an "alt+F4" combo if capslock is on.
      + "Y" is the space bar.
@@ -26,6 +26,7 @@ There will be bugs, I will try and fix them whenever I have time.
      + "LT" is either the left arrow or down key if the capslock is on.
      + "RB" is a toggle between the letter and number/symbol layout
      + "LB" is the capslock toggle.
+     + "Start" is enter.
 + Only one instance of the keyboard can be shown at a time. if multiple controllers are connected only the controller that the started the keyboard can type. 
   
 # Work To Be Done
