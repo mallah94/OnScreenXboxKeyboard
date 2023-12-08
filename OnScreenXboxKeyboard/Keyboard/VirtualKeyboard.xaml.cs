@@ -1,4 +1,6 @@
 ﻿using System.ComponentModel;
+using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Automation.Peers;
@@ -21,6 +23,17 @@ namespace KeyPad
         private bool _isInNumpad = false;
         private bool _controllerClick = false;
         private bool _capsLocked = true;
+        private Process _process;
+        private IntPtr _foreGroundWindow;
+
+        [DllImport("user32.dll")]
+        private static extern IntPtr SetForegroundWindow(IntPtr hWnd);
+
+        [DllImport("user32.dll")]
+        private static extern IntPtr GetForegroundWindow();
+        [DllImport("user32.dll", SetLastError = true)]
+        static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
+
         public bool ShowNumericKeyboard
         {
             get { return _showNumericKeyboard; }
@@ -45,6 +58,11 @@ namespace KeyPad
             FlipCapitalization();
             // Set focus to the VirtualKeyboard window
             this.Loaded += (sender, e) => { this.Focus(); };
+
+            _foreGroundWindow = GetForegroundWindow();
+            _process = Process.GetCurrentProcess();
+            var name = _process.ProcessName;
+            SetForegroundWindow(_process.MainWindowHandle);
         }
 
         #endregion
@@ -301,8 +319,12 @@ namespace KeyPad
                 text = "{" + text + "}";
             }
             try
-            {         
+            {
+                SetForegroundWindow(_foreGroundWindow);
+                Thread.Sleep(15);
                 SendKeys.SendWait(text);
+                Thread.Sleep(15);
+                SetForegroundWindow(_process.MainWindowHandle);
             }
             catch (Exception)
             {
