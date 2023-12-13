@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
@@ -17,67 +18,189 @@ namespace KeyPad
     /// </summary>
     public partial class VirtualKeyboard : Window, INotifyPropertyChanged
     {
-        #region Public Properties
+        #region Properties and fields
 
         private bool _showNumericKeyboard;
         private bool _isInNumpad = false;
         private bool _controllerClick = false;
         private bool _capsLocked = true;
-        private Process _process;
+        private bool _typing = false;
         private IntPtr _foreGroundWindow;
+
+        [DllImport("USER32.DLL", CharSet = CharSet.Unicode)]
+        public static extern IntPtr FindWindow(String lpClassName, String lpWindowName);
 
         [DllImport("user32.dll")]
         private static extern IntPtr SetForegroundWindow(IntPtr hWnd);
-
-        [DllImport("user32.dll")]
-        private static extern IntPtr GetForegroundWindow();
-        [DllImport("user32.dll", SetLastError = true)]
-        static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
 
         public bool ShowNumericKeyboard
         {
             get { return _showNumericKeyboard; }
             set { _showNumericKeyboard = value; this.OnPropertyChanged("ShowNumericKeyboard"); }
         }
-
         #endregion
 
         #region Constructor
-
-        public VirtualKeyboard(Window wndOwner)
+        public VirtualKeyboard()
         {
             InitializeComponent();
-            this.Owner = wndOwner;
+            this.MainBorder.BorderBrush = new SolidColorBrush(Colors.Cyan);
             this.DataContext = this;
 
             // Center the window horizontally
             this.Left = (SystemParameters.PrimaryScreenWidth - this.Width) / 2;
             // Set the window position in the bottom third vertically
-            this.Top = SystemParameters.PrimaryScreenHeight - this.Height;
+            this.Top = SystemParameters.PrimaryScreenHeight - (SystemParameters.PrimaryScreenHeight * 0.3);
 
             FlipCapitalization();
             // Set focus to the VirtualKeyboard window
             this.Loaded += (sender, e) => { this.Focus(); };
-
-            _foreGroundWindow = GetForegroundWindow();
-            _process = Process.GetCurrentProcess();
-            var name = _process.ProcessName;
-            SetForegroundWindow(_process.MainWindowHandle);
         }
-
         #endregion
 
-        #region Callbacks
-        private void Window_ContentRendered(object sender, EventArgs e)
+        #region public Functions
+        public void HandleSpaceClick()
         {
-            // Set focus to the "q" button
-            var qButton = FindButtonByCommandParameter("Q");
-            if (qButton != null)
+            _controllerClick = true;
+            var button = FindButtonByCommandParameter("SPACE");
+            button?.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent));
+        }
+
+        public void HandleBackSpaceClick()
+        {
+            _controllerClick = true;
+            var button = FindButtonByCommandParameter("BACK");
+            button?.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent));
+        }
+
+        public void HandleFuncClick()
+        {
+            _controllerClick = true;
+            var button = FindButtonByCommandParameter("FUNC");
+            button?.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent));
+        }
+
+        public void HandleCapsClick()
+        {
+            _controllerClick = true;
+            var button = FindButtonByCommandParameter("LSHIFT");
+            button?.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent));
+        }
+
+        public void HandleSubmitClick()
+        {
+            _controllerClick = true;
+            var button = FindButtonByCommandParameter("RETURN");
+            button?.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent));
+        }
+
+        public void HandleCLoseClick()
+        {
+            this.Close();
+        }
+
+        public void HandleRightClick()
+        {
+            _controllerClick = true;
+            var button = FindButtonByCommandParameter("CARROW4");
+            button?.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent));
+        }
+
+        public void HandleLeftClick()
+        {
+            _controllerClick = true;
+            var button = FindButtonByCommandParameter("CARROW3");
+            button?.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent));
+        }
+
+        public void HandleNumPadSwitch()
+        {
+            _controllerClick = true;
+            var button = _isInNumpad ? this.FindName("NumSwitch") as ToggleButton : this.FindName("AlfaSwitch") as ToggleButton;
+            if (button != null)
             {
-                qButton.Focus();
+                PushToggleButton(button);
             }
         }
 
+        public void SetForeGroundWindow(IntPtr foregroundWindow)
+        {
+            _foreGroundWindow = foregroundWindow;
+        }
+
+        public void HandleButtonClick()
+        {
+            _controllerClick = true;
+            // Get the focused element
+            var focusedElement = FocusManager.GetFocusedElement(this);
+
+            // Check if the focused element is a button
+            if (focusedElement is System.Windows.Controls.Button button)
+            {
+                button.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent));
+            }
+
+            // Check if the focused element is a toggled button
+            if (focusedElement is ToggleButton toggleButton)
+            {
+                PushToggleButton(toggleButton);
+            }
+        }
+
+        public void SetProcess(IntPtr foregroundWindow)
+        {
+            _foreGroundWindow = foregroundWindow;
+
+            // Closing event
+            this.Closing += (s, args) =>
+            {
+                SetForegroundWindow(_foreGroundWindow);
+            };
+
+            //Handle focus
+            this.Deactivated += (s, args) =>
+            {
+                if (!_typing)
+                {
+                    this.MainBorder.BorderBrush = (SolidColorBrush)new BrushConverter().ConvertFrom("#3A3A3A");
+;
+                }
+            };
+
+            this.Activated += (s, args) =>
+            {
+                if (!_typing)
+                {
+                    this.MainBorder.BorderBrush = new SolidColorBrush(Colors.Cyan);
+                }
+            };
+
+            SetForegroundWindow(FindWindow(null, this.Title));
+        }
+
+        public void MoveFocus(FocusNavigationDirection direction)
+        {
+            var focusedElement = FocusManager.GetFocusedElement(this) as UIElement;
+            if (focusedElement != null)
+            {
+                TraversalRequest request = new TraversalRequest(direction);
+                var focusedButton = focusedElement as System.Windows.Controls.Button;
+                // Set focus to the next/previous button based on the current keyboard mode
+                if (_isInNumpad)
+                {
+                    var nextButton = FindNextButton(NumKeyboard, focusedButton, direction);
+                    nextButton?.Focus();
+                }
+                else
+                {
+                    var nextButton = FindNextButton(AlfaKeyboard, focusedButton, direction);
+                    nextButton?.Focus();
+                }
+            }
+        }
+        #endregion
+
+        #region Private functions
         private System.Windows.Controls.Button? FindButtonByCommandParameter(string commandParameter)
         {
             foreach (UIElement element in AlfaKeyboard.Children)
@@ -107,80 +230,6 @@ namespace KeyPad
                 }
             }
             return null;
-        }
-
-        private void button_Click(object sender, RoutedEventArgs e)
-        {
-            if (!_controllerClick)
-            {
-                return;
-            }
-            System.Windows.Controls.Button? button = sender as System.Windows.Controls.Button;
-            if (button != null)
-            {
-                switch (button.CommandParameter.ToString())
-                {
-                    case "LSHIFT":
-                        FlipCapitalization();
-                        break;
-                    
-                    case "RETURN":
-                        TypeResults("{ENTER}");
-                        break;
-
-                    case "BACK":
-                        TypeResults("{BACKSPACE}");
-                        break;
-
-                    case "TAB":
-                        TypeResults("{TAB}");
-                        break;
-
-                    case "SPACE":
-                        TypeResults(" ");
-                        break;
-
-                    case "FUNC":
-                        if (_capsLocked)
-                        {
-                            TypeResults("%{F4}");
-                        }
-                        else
-                        {
-                            TypeResults("^1");
-                        }
-                        break;
-
-                    case "CARROW3":
-                    case "CARROW1":
-                        if (_capsLocked)
-                        {
-                            TypeResults("{DOWN}");
-                        }
-                        else 
-                        {
-                            TypeResults("{LEFT}");
-                        }
-                        break;
-
-                    case "CARROW4":
-                    case "CARROW2":
-                        if (_capsLocked)
-                        {
-                            TypeResults("{UP}");
-                        }
-                        else
-                        {
-                            TypeResults("{RIGHT}");
-                        }
-                        break;
-                    
-                    default:
-                        TypeResults(button.Content.ToString());
-                        break;
-                }
-                _controllerClick = false;
-            }            
         }
 
         private void FlipCapitalization()
@@ -233,7 +282,8 @@ namespace KeyPad
                     { ",", "<"},
                     { ".", ">"},
                     { "?", "~"},
-                    { "'", "`"}
+                    { "'", "`"},
+                    { "-", "_"}
                 };
 
                 if (grid != null)
@@ -313,50 +363,51 @@ namespace KeyPad
         {
             if (text is null)
             { return; }
-            var specialChars = new List<string> { "+", "^", "%","~", "(", ")", "{", "}", "[", "]" };
+            var specialChars = new List<string> { "+", "^", "%", "~", "(", ")", "{", "}", "[", "]" };
             if (text.Length == 1 && specialChars.Contains(text))
             {
                 text = "{" + text + "}";
             }
             try
             {
+                _typing = true;
                 SetForegroundWindow(_foreGroundWindow);
                 Thread.Sleep(15);
                 SendKeys.SendWait(text);
                 Thread.Sleep(15);
-                SetForegroundWindow(_process.MainWindowHandle);
+                SetForegroundWindow(FindWindow(null, this.Title));
+                _typing = false;
             }
             catch (Exception)
             {
-                
+
             }
         }
 
-        public void MoveFocus(FocusNavigationDirection direction)
+        private void PushToggleButton(ToggleButton b)
         {
-            var focusedElement = FocusManager.GetFocusedElement(this) as UIElement;
-            if (focusedElement != null)
+            _isInNumpad = !_isInNumpad;
+            ToggleButtonAutomationPeer peer = new ToggleButtonAutomationPeer(b);
+            System.Windows.Automation.Provider.IToggleProvider? toggleProvider = peer.GetPattern(PatternInterface.Toggle) as System.Windows.Automation.Provider.IToggleProvider;
+            toggleProvider?.Toggle();
+
+            var qButton = FindButtonByCommandParameter("Q");
+            var numButton = FindButtonByCommandParameter("_1");
+            if (_isInNumpad)
             {
-                TraversalRequest request = new TraversalRequest(direction);
-                var focusedButton = focusedElement as System.Windows.Controls.Button;
-                // Set focus to the next/previous button based on the current keyboard mode
-                if (_isInNumpad)
-                {
-                    var nextButton = FindNextButton(NumKeyboard, focusedButton, direction);
-                    nextButton?.Focus();
-                }
-                else
-                {
-                    var nextButton = FindNextButton(AlfaKeyboard, focusedButton, direction);
-                    nextButton?.Focus();
-                }
+                numButton?.Focus();
             }
+            else
+            {
+                qButton?.Focus();
+            }
+            _controllerClick = false;
         }
 
         private System.Windows.Controls.Button? FindNextButton(System.Windows.Controls.Panel panel, System.Windows.Controls.Button? currentButton, FocusNavigationDirection direction)
         {
             if (currentButton == null)
-            { 
+            {
                 return null;
             }
             var grids = panel.Children.OfType<Grid>().ToList();
@@ -369,7 +420,7 @@ namespace KeyPad
                 if (index != -1)
                 {
                     var previousGrid = i > 0 ? grids[i - 1] : grids[grids.Count - 1];
-                    var nextGrid = i < grids.Count -1 ? grids[i + 1] : grids[0];
+                    var nextGrid = i < grids.Count - 1 ? grids[i + 1] : grids[0];
 
                     if (direction == FocusNavigationDirection.Left)
                     {
@@ -407,108 +458,91 @@ namespace KeyPad
 
             return null;
         }
+        #endregion
 
-        public void HandleSpaceClick()
+        #region Callbacks
+        private void Window_ContentRendered(object sender, EventArgs e)
         {
-            _controllerClick = true;
-            var button = FindButtonByCommandParameter("SPACE");
-            button?.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent));
+            // Set focus to the "q" button
+            var qButton = FindButtonByCommandParameter("Q");
+            if (qButton != null)
+            {
+                qButton.Focus();
+            }
         }
 
-        public void HandleBackSpaceClick()
+        private void button_Click(object sender, RoutedEventArgs e)
         {
-            _controllerClick = true;
-            var button = FindButtonByCommandParameter("BACK");
-            button?.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent));
-        }
-
-        public void HandleFuncClick()
-        {
-            _controllerClick = true;
-            var button = FindButtonByCommandParameter("FUNC");
-            button?.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent));
-        }
-
-        public void HandleCapsClick()
-        {
-            _controllerClick = true;
-            var button = FindButtonByCommandParameter("LSHIFT");
-            button?.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent));
-        }
-
-        public void HandleSubmitClick()
-        {
-            _controllerClick = true;
-            var button = FindButtonByCommandParameter("RETURN");
-            button?.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent));
-        }
-
-        public void HandleCLoseClick()
-        {
-           this.Close();
-        }
-
-        public void HandleRightClick()
-        {
-            _controllerClick = true;
-            var button = FindButtonByCommandParameter("CARROW4");
-            button?.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent));
-        }
-
-        public void HandleLeftClick()
-        {
-            _controllerClick = true;
-            var button = FindButtonByCommandParameter("CARROW3");
-            button?.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent));
-        }
-
-        public void HandleNumPadSwitch()
-        {
-            _controllerClick = true;
-            var button = _isInNumpad ? this.FindName("NumSwitch") as ToggleButton : this.FindName("AlfaSwitch") as ToggleButton;
+            if (!_controllerClick)
+            {
+                return;
+            }
+            System.Windows.Controls.Button? button = sender as System.Windows.Controls.Button;
             if (button != null)
             {
-                PushToggleButton(button);
-            }
-        }
+                switch (button.CommandParameter.ToString())
+                {
+                    case "LSHIFT":
+                        FlipCapitalization();
+                        break;
+                    
+                    case "RETURN":
+                        TypeResults("{ENTER}");
+                        break;
 
-        public void HandleButtonClick()
-        {
-            _controllerClick = true;
-            // Get the focused element
-            var focusedElement = FocusManager.GetFocusedElement(this);
+                    case "BACK":
+                        TypeResults("{BACKSPACE}");
+                        break;
 
-            // Check if the focused element is a button
-            if (focusedElement is System.Windows.Controls.Button button)
-            {
-                button.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent));
-            }
+                    case "TAB":
+                        TypeResults("{TAB}");
+                        break;
 
-            // Check if the focused element is a toggled button
-            if (focusedElement is ToggleButton toggleButton)
-            {
-                PushToggleButton(toggleButton);
-            }
-        }
+                    case "SPACE":
+                        TypeResults(" ");
+                        break;
 
-        private void PushToggleButton(ToggleButton b)
-        {
-            _isInNumpad = !_isInNumpad;
-            ToggleButtonAutomationPeer peer = new ToggleButtonAutomationPeer(b);
-            System.Windows.Automation.Provider.IToggleProvider? toggleProvider = peer.GetPattern(PatternInterface.Toggle) as System.Windows.Automation.Provider.IToggleProvider;
-            toggleProvider?.Toggle();
+                    case "FUNC":
+                        if (_capsLocked)
+                        {
+                            TypeResults("%{F4}");
+                        }
+                        else
+                        {
+                            TypeResults("^1");
+                        }
+                        break;
 
-            var qButton = FindButtonByCommandParameter("Q");
-            var numButton = FindButtonByCommandParameter("_1");
-            if (_isInNumpad)
-            {
-                numButton?.Focus();
-            }
-            else 
-            {
-                qButton?.Focus();
-            }
-            _controllerClick = false;
+                    case "CARROW3":
+                    case "CARROW1":
+                        if (_capsLocked)
+                        {
+                            TypeResults("{DOWN}");
+                        }
+                        else 
+                        {
+                            TypeResults("{LEFT}");
+                        }
+                        break;
+
+                    case "CARROW4":
+                    case "CARROW2":
+                        if (_capsLocked)
+                        {
+                            TypeResults("{UP}");
+                        }
+                        else
+                        {
+                            TypeResults("{RIGHT}");
+                        }
+                        break;
+                    
+                    default:
+                        TypeResults(button.Content.ToString());
+                        break;
+                }
+                _controllerClick = false;
+            }            
         }
         #endregion        
 

@@ -15,10 +15,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="Assets\keyboard-1.png" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Resource Include="Assets\dr_key.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
@@ -29,9 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="Assets\keyboard-1.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
+    <PackageReference Include="Hardcodet.NotifyIcon.Wpf" Version="1.1.0" />
   </ItemGroup>
 
 </Project>

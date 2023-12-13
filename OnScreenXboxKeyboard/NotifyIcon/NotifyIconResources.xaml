@@ -1,0 +1,16 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:tb="http://www.hardcodet.net/taskbar"
+                    xmlns:local="clr-namespace:OnScreenXboxKeyboard.NotifyIcon">
+    <ContextMenu x:Shared="false" x:Key="SysTrayMenu">
+        <MenuItem Header="Exit" Command="{Binding ExitApplicationCommand}" />
+    </ContextMenu>
+    <tb:TaskbarIcon x:Key="NotifyIcon"
+                    IconSource="../Assets/dr_key.ico"
+                    ToolTipText="On-screen xbox keyboard, right click for menu"
+                    ContextMenu="{StaticResource SysTrayMenu}">
+        <tb:TaskbarIcon.DataContext>
+            <local:NotifyIconViewModel />
+        </tb:TaskbarIcon.DataContext>
+    </tb:TaskbarIcon>
+</ResourceDictionary>
