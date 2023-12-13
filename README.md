@@ -14,7 +14,7 @@ There will be bugs, I will try and fix them whenever I have time.
  + **If you are updating from an earlier version please uninstall first then re install. otherwise you will get 2 versions running**
 
 # How To Use
- + Once the program starts it will show a small keyboard icon at the left corner of your desktop (yes this is unnecessary and is a remnant from a way older version of this code that I had locally I will remove it soon I hope)
+ + Once the program starts it an icon will be shown in the tray (task bar hidden icons)
  + The app is now listening for controllers
  + to activate the keyboard just press and hold the "Select"/"Back" button on your controller for 2 seconds.
  + You can use the D-Pad to select a letter and the A button to confirm it.
@@ -29,12 +29,15 @@ There will be bugs, I will try and fix them whenever I have time.
      + "LB" is the capslock toggle.
      + "Start" is enter.
 + Only one instance of the keyboard can be shown at a time. if multiple controllers are connected only the controller that the started the keyboard can type. 
-  
++ If the keyboard is in focus it will have a cyan boarder, otherwise it will not.. when it is not in focus you can regain focus by holding the Select"/"Back" button again.
++ If the keyboard is not in focus then it will not read controller input.
+
 # Work To Be Done
-  + As mentioned above rewrite the software so it does not have the icon at the button corner of the screen. (it is useless in the current version of the app)
-      + Move into a taskbar app with a hidden icon.
+  + Fix random bugs.
+  + refactor code and architecture.
+  + find a better way of blocking controller input instead of shifting app focus (current solution is very hacky...)
    
 # Known bugs:
-  + Some apps that also read controller input will continue to function while the keyboard is on. ==> The Windows settings app, for example, has this problem which means that you can not type there since the focus moves away from the selected text box if you do.
+  + sometimes keyboard does not start in focus... i have no idea what causes this (the keyboard thinks it is in focus but it is not so you can not type)
   + More to come I am assuming
   + Fix installer not updating
