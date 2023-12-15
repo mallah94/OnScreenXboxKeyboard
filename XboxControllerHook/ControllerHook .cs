@@ -1,7 +1,5 @@
 ﻿// ControllerHook class that implements the IControllerHook interface
 using SharpDX.XInput;
-using System;
-using System.Reflection;
 using XboxControllerHook.Enums;
 using XboxControllerHook.Helpers;
 using XboxControllerHook.Interfaces;
@@ -84,29 +82,29 @@ public class ControllerHook : IControllerHook
     public async Task StartChecking()
     {
         InitializeButtons();
-        var button = XboxControllerButton.Back;
+        var button = XboxControllerButton.RightStick;
 
         while (!_stopListening)
         {
-            for (int i = 0; i < 4; i++  )
+            for (int i = 0; i < 4; i++)
             {
                 var foundButton = _buttonStates[i].FirstOrDefault(x => x.Item1 == button);
                 if (!_controllers[i].IsConnected)
                 { continue; }
                 var gamepad = _controllers[i].GetState().Gamepad;
-                var backButtonPressed = gamepad.Buttons.HasFlag(GamepadButtonFlags.Back);
+                var wantedButtonPressed = gamepad.Buttons.HasFlag(GamepadButtonFlags.RightThumb);
                 if (foundButton != null)
                 {
-                    if (foundButton.Item2 != backButtonPressed)
+                    if (foundButton.Item2 != wantedButtonPressed)
                     {
                         _buttonStates[i].Remove(foundButton);
-                        _buttonStates[i].Add(new Tuple<XboxControllerButton, bool, DateTime>(button, backButtonPressed, DateTime.Now));
+                        _buttonStates[i].Add(new Tuple<XboxControllerButton, bool, DateTime>(button, wantedButtonPressed, DateTime.Now));
                     }
-                    else if (backButtonPressed && foundButton.Item2 == backButtonPressed && DateTime.Now - foundButton.Item3 >= TimeSpan.FromSeconds(2))
+                    else if (wantedButtonPressed && foundButton.Item2 == wantedButtonPressed && DateTime.Now - foundButton.Item3 >= TimeSpan.FromSeconds(2))
                     {
                         // Button is being held
                         SecretActivated?.Invoke(this, new SecretActivatedEventArgs() { Index = (UserIndex)i });
-                            await StartCheckingTypingController((UserIndex)i);
+                        await StartCheckingTypingController((UserIndex)i);
                     }
                 }
             }
@@ -131,7 +129,7 @@ public class ControllerHook : IControllerHook
                 bool isButtonPressed = IsButtonPressed(index, button);
                 var foundButton = _buttonStates[(int)index].FirstOrDefault(x => x.Item1 == button);
                 if (foundButton != null)
-                {   
+                {
                     if (foundButton.Item2 != isButtonPressed)
                     {
                         if (isButtonPressed && firstButtonPressed)
@@ -148,7 +146,7 @@ public class ControllerHook : IControllerHook
                         {
                             OnKeyPressed(button, true);
                         }
-                    }                 
+                    }
                 }
             }
 
@@ -205,12 +203,8 @@ public class ControllerHook : IControllerHook
                 return gamepad.Buttons.HasFlag(GamepadButtonFlags.LeftShoulder);
             case XboxControllerButton.RightBumper:
                 return gamepad.Buttons.HasFlag(GamepadButtonFlags.RightShoulder);
-
-            // Joysticks
-            case XboxControllerButton.LeftStick:
-                return IsJoystickMoved(gamepad.LeftThumbX, gamepad.LeftThumbY) || gamepad.Buttons.HasFlag(GamepadButtonFlags.LeftThumb);
             case XboxControllerButton.RightStick:
-                return IsJoystickMoved(gamepad.RightThumbX, gamepad.RightThumbY) || gamepad.Buttons.HasFlag(GamepadButtonFlags.RightThumb);
+                return gamepad.Buttons.HasFlag(GamepadButtonFlags.RightThumb);
 
             // Triggers
             case XboxControllerButton.LeftTrigger:

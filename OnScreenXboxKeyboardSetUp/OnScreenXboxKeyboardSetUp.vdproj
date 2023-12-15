@@ -209,15 +209,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:OnScreenXboxKeyboard"
-        "ProductCode" = "8:{52597B1B-A798-496F-85A4-EEF997C8F3FF}"
-        "PackageCode" = "8:{043FB665-DF81-493A-BA56-668D1615EDB0}"
+        "ProductCode" = "8:{9C46E3B3-029E-49CA-AFA2-F84BB6BE1554}"
+        "PackageCode" = "8:{9D01B8A3-919E-43BD-97E0-0D91991B14F6}"
         "UpgradeCode" = "8:{4995697C-1356-4058-A6DD-627F78016CAC}"
         "AspNetVersion" = "8:"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:1.1.0"
+        "ProductVersion" = "8:1.1.1"
         "Manufacturer" = "8:Mallahji"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
@@ -759,7 +759,7 @@
         {
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_0B33727C2816410493D08691525A2846"
             {
-            "SourcePath" = "8:..\\OnScreenXboxKeyboard\\obj\\Debug\\net8.0-windows\\apphost.exe"
+            "SourcePath" = "8:..\\OnScreenXboxKeyboard\\obj\\Release\\net8.0-windows\\apphost.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_D204B7A9F208444AB47207AB7D7A426E"

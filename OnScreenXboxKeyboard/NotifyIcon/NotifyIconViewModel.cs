@@ -1,8 +1,7 @@
 ﻿using KeyPad;
 using OnScreenXboxKeyboard.Helpers;
-using System.Diagnostics;
-using System.Reflection.Metadata;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Windows.Input;
 using XboxControllerHook.Helpers;
 using XboxControllerHook.Interfaces;
@@ -17,9 +16,6 @@ namespace OnScreenXboxKeyboard.NotifyIcon
         private IntPtr _foregroundWindow;
 
         [DllImport("user32.dll")]
-        private static extern IntPtr SetForegroundWindow(IntPtr hWnd);
-
-        [DllImport("user32.dll")]
         private static extern IntPtr GetForegroundWindow();
 
         [DllImport("user32.dll", SetLastError = true)]
@@ -28,7 +24,13 @@ namespace OnScreenXboxKeyboard.NotifyIcon
         [DllImport("USER32.DLL", CharSet = CharSet.Unicode)]
         public static extern IntPtr FindWindow(String lpClassName, String lpWindowName);
 
-        public NotifyIconViewModel() 
+        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        static extern int GetWindowText(IntPtr hWnd, StringBuilder lpString, int nMaxCount);
+
+        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+        static extern int GetWindowTextLength(IntPtr hWnd);
+
+        public NotifyIconViewModel()
         {
             //Start and subscribe to controller hook
             _hook = new ControllerHook();
@@ -60,12 +62,19 @@ namespace OnScreenXboxKeyboard.NotifyIcon
             _keyboardWindow = null;
             _hook.StopCheckingTypingController();
         }
+        private string GetWindowTitle(IntPtr hWnd)
+        {
+            var length = GetWindowTextLength(hWnd) + 1;
+            var title = new StringBuilder(length);
+            GetWindowText(hWnd, title, length);
+            return title.ToString();
+        }
 
         private void HandleControllerKeyPressed(object? sender, KeyPressedEventArgs e)
         {
             var button = e.PressedButton;
 
-            if (_keyboardWindow == null && button != XboxControllerHook.Enums.XboxControllerButton.Back)
+            if (_keyboardWindow == null && button != XboxControllerHook.Enums.XboxControllerButton.RightStick)
             {
                 return;
             }
@@ -73,7 +82,7 @@ namespace OnScreenXboxKeyboard.NotifyIcon
             var currentForeGroundWindow = GetForegroundWindow();
             var wantedWindow = FindWindow(null, _keyboardWindow?.Title);
 
-            if (currentForeGroundWindow != wantedWindow && button != XboxControllerHook.Enums.XboxControllerButton.Back)
+            if (currentForeGroundWindow != wantedWindow && button != XboxControllerHook.Enums.XboxControllerButton.RightStick)
             {
                 return;
             }
@@ -132,7 +141,7 @@ namespace OnScreenXboxKeyboard.NotifyIcon
             {
                 _keyboardWindow.HandleRightClick();
             }
-            else if (button == XboxControllerHook.Enums.XboxControllerButton.Back)
+            else if (button == XboxControllerHook.Enums.XboxControllerButton.RightStick)
             {
                 if (!e.IsButtonHeld && wantedWindow == currentForeGroundWindow)
                 {
@@ -145,8 +154,8 @@ namespace OnScreenXboxKeyboard.NotifyIcon
                         _foregroundWindow = currentForeGroundWindow;
                         _keyboardWindow?.SetForeGroundWindow(_foregroundWindow);
                     }
-                  
-                    SetForegroundWindow(wantedWindow);
+
+                    _keyboardWindow.SwitchWindow(wantedWindow);
                 }
             }
         }

@@ -1,6 +1,4 @@
-﻿using System;
-using System.ComponentModel;
-using System.Diagnostics;
+﻿using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Windows;
@@ -32,6 +30,26 @@ namespace KeyPad
 
         [DllImport("user32.dll")]
         private static extern IntPtr SetForegroundWindow(IntPtr hWnd);
+
+        [DllImport("user32.dll")]
+        public static extern IntPtr GetForegroundWindow();
+
+        [DllImport("kernel32.dll")]
+        public static extern uint GetCurrentThreadId();
+
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
+
+        [DllImport("user32.dll")]
+        public static extern bool AttachThreadInput(uint idAttach, uint idAttachTo, bool fAttach);
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall)]
+        public static extern void mouse_event(uint dwFlags, uint dx, uint dy, uint cButtons, uint dwExtraInfo);
+        //Mouse actions
+        private const int MOUSEEVENTF_LEFTDOWN = 0x02;
+        private const int MOUSEEVENTF_LEFTUP = 0x04;
+        private const int MOUSEEVENTF_RIGHTDOWN = 0x08;
+        private const int MOUSEEVENTF_RIGHTUP = 0x10;
 
         public bool ShowNumericKeyboard
         {
@@ -154,7 +172,7 @@ namespace KeyPad
             // Closing event
             this.Closing += (s, args) =>
             {
-                SetForegroundWindow(_foreGroundWindow);
+                SwitchWindow(_foreGroundWindow);
             };
 
             //Handle focus
@@ -163,7 +181,6 @@ namespace KeyPad
                 if (!_typing)
                 {
                     this.MainBorder.BorderBrush = (SolidColorBrush)new BrushConverter().ConvertFrom("#3A3A3A");
-;
                 }
             };
 
@@ -175,7 +192,7 @@ namespace KeyPad
                 }
             };
 
-            SetForegroundWindow(FindWindow(null, this.Title));
+            SwitchWindow(FindWindow(null, this.Title));
         }
 
         public void MoveFocus(FocusNavigationDirection direction)
@@ -198,9 +215,61 @@ namespace KeyPad
                 }
             }
         }
+
+        public void SwitchWindow(IntPtr windowHandle)
+        {
+            if (GetForegroundWindow() == windowHandle)
+                return;
+
+            IntPtr foregroundWindowHandle = GetForegroundWindow();
+            uint currentThreadId = GetCurrentThreadId();
+            uint temp;
+            uint foregroundThreadId = GetWindowThreadProcessId(foregroundWindowHandle, out temp);
+            AttachThreadInput(currentThreadId, foregroundThreadId, true);
+            SetForegroundWindow(windowHandle);
+            AttachThreadInput(currentThreadId, foregroundThreadId, false);
+
+            var startTime = DateTime.Now;
+            var forceFocus = false;
+            while (GetForegroundWindow() != windowHandle)
+            {
+                if (DateTime.Now - startTime > TimeSpan.FromMilliseconds(500))
+                {
+                    forceFocus = true;
+                    break;
+                }
+                Thread.Sleep(10);
+            }
+            if (forceFocus)
+            {
+                DoMouseClick();
+            }
+        }
+
         #endregion
 
         #region Private functions
+        private void DoMouseClick()
+        {
+            if (Screen.PrimaryScreen == null)
+            {
+                return;
+            }
+
+            var currentPosition = System.Windows.Forms.Cursor.Position;
+
+            System.Windows.Forms.Cursor.Position = new System.Drawing.Point(
+                Screen.PrimaryScreen.Bounds.Width / 2,
+                (Screen.PrimaryScreen.Bounds.Height - Screen.PrimaryScreen.Bounds.Height / 4));
+
+            //Call the imported function with the cursor's current position
+            uint X = (uint)System.Windows.Forms.Cursor.Position.X;
+            uint Y = (uint)System.Windows.Forms.Cursor.Position.Y;
+            mouse_event(MOUSEEVENTF_LEFTDOWN | MOUSEEVENTF_LEFTUP, X, Y, 0, 0);
+
+            System.Windows.Forms.Cursor.Position = currentPosition;
+        }
+
         private System.Windows.Controls.Button? FindButtonByCommandParameter(string commandParameter)
         {
             foreach (UIElement element in AlfaKeyboard.Children)
@@ -371,11 +440,11 @@ namespace KeyPad
             try
             {
                 _typing = true;
-                SetForegroundWindow(_foreGroundWindow);
-                Thread.Sleep(15);
+                SwitchWindow(_foreGroundWindow);
+                Thread.Sleep(50);
                 SendKeys.SendWait(text);
-                Thread.Sleep(15);
-                SetForegroundWindow(FindWindow(null, this.Title));
+                Thread.Sleep(30);
+                SwitchWindow(FindWindow(null, this.Title));
                 _typing = false;
             }
             catch (Exception)
@@ -485,7 +554,7 @@ namespace KeyPad
                     case "LSHIFT":
                         FlipCapitalization();
                         break;
-                    
+
                     case "RETURN":
                         TypeResults("{ENTER}");
                         break;
@@ -519,7 +588,7 @@ namespace KeyPad
                         {
                             TypeResults("{DOWN}");
                         }
-                        else 
+                        else
                         {
                             TypeResults("{LEFT}");
                         }
@@ -536,13 +605,13 @@ namespace KeyPad
                             TypeResults("{RIGHT}");
                         }
                         break;
-                    
+
                     default:
                         TypeResults(button.Content.ToString());
                         break;
                 }
                 _controllerClick = false;
-            }            
+            }
         }
         #endregion        
 
